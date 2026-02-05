@@ -3,286 +3,207 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SA DTR Admin Dashboard</title>
+  <title>Student Assistant DTR System</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="sa-dtr-admin-styles.css">
+  <link rel="stylesheet" href="sa-dtr-styles.css">
 </head>
+<nav>
+  <link rel="Admin" href="sa-dtr-admin.html">
 <body>
-  <!-- Background -->
+
+  <!-- Enhanced Background -->
   <div class="bg-container">
     <div class="bg-gradient"></div>
-    <div class="grid-overlay"></div>
+    <div class="bg-pattern"></div>
     <div class="orb orb1"></div>
     <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    <div class="particles" id="particles"></div>
   </div>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo-container">
-        <img src="ush_logo.png" alt="Logo" class="sidebar-logo" onerror="this.style.display='none'">
-      </div>
-      <h2 class="sidebar-title">SA DTR<br>ADMIN</h2>
-    </div>
-
-    <nav class="sidebar-nav">
-      <a href="#" class="nav-item active" data-view="dashboard">
-        <span class="nav-icon">📊</span>
-        <span class="nav-text">Dashboard</span>
-      </a>
-      <a href="#" class="nav-item" data-view="dtr-records">
-        <span class="nav-icon">📋</span>
-        <span class="nav-text">DTR Records</span>
-      </a>
-      <a href="#" class="nav-item" data-view="student-assistants">
-        <span class="nav-icon">👥</span>
-        <span class="nav-text">Student Assistants</span>
-      </a>
-      <a href="#" class="nav-item" data-view="reports">
-        <span class="nav-icon">📈</span>
-        <span class="nav-text">Reports</span>
-      </a>
-      <a href="#" class="nav-item" data-view="settings">
-        <span class="nav-icon">⚙️</span>
-        <span class="nav-text">Settings</span>
-      </a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="admin-profile">
-        <div class="admin-avatar">A</div>
-        <div class="admin-info">
-          <div class="admin-name">Administrator</div>
-          <div class="admin-role">HRMO</div>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <div class="logo">
+          <img src="ush_logo.png" alt="University of Baguio Logo" onerror="this.style.display='none'">
         </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Content -->
-  <main class="main-content">
-    <!-- Header -->
-    <header class="dashboard-header">
-      <div class="header-left">
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle">Student Assistant DTR Monitoring</p>
-      </div>
-      <div class="header-right">
-        <div class="date-time" id="current-datetime"></div>
-        <button class="btn-refresh" onclick="refreshData()">
-          <span class="refresh-icon">🔄</span>
-          Refresh
-        </button>
-      </div>
-    </header>
-
-    <!-- Dashboard View -->
-    <div id="dashboard-view" class="view-container active">
-      <!-- Stats Cards -->
-      <div class="stats-grid">
-        <div class="stat-card stat-primary">
-          <div class="stat-header">
-            <span class="stat-icon">✓</span>
-            <span class="stat-trend up">Today</span>
-          </div>
-          <div class="stat-value" id="stat-checked-in">0</div>
-          <div class="stat-label">Currently On Duty</div>
-          <div class="stat-footer">
-            <span class="stat-detail" id="stat-dept-breakdown"></span>
-          </div>
-        </div>
-
-        <div class="stat-card stat-success">
-          <div class="stat-header">
-            <span class="stat-icon">👥</span>
-            <span class="stat-trend">Total</span>
-          </div>
-          <div class="stat-value" id="stat-total-sas">0</div>
-          <div class="stat-label">Registered SAs</div>
-          <div class="stat-footer">
-            <span class="stat-detail" id="stat-active-sas"></span>
-          </div>
-        </div>
-
-        <div class="stat-card stat-warning">
-          <div class="stat-header">
-            <span class="stat-icon">📅</span>
-            <span class="stat-trend">This Month</span>
-          </div>
-          <div class="stat-value" id="stat-month-hours">0</div>
-          <div class="stat-label">Total Hours</div>
-          <div class="stat-footer">
-            <span class="stat-detail" id="stat-avg-hours"></span>
-          </div>
-        </div>
-
-        <div class="stat-card stat-info">
-          <div class="stat-header">
-            <span class="stat-icon">⏱️</span>
-            <span class="stat-trend">Today</span>
-          </div>
-          <div class="stat-value" id="stat-today-records">0</div>
-          <div class="stat-label">DTR Records</div>
-          <div class="stat-footer">
-            <span class="stat-detail" id="stat-completed"></span>
-          </div>
-        </div>
+        <h1>Student Assistant DTR</h1>
+        <p class="subtitle">Daily Time Record Check-In/Check-Out System</p>
+        <div class="current-date" id="current-date"></div>
       </div>
 
-      <!-- Live DTR & Recent Activity -->
-      <div class="dashboard-row">
-        <!-- Live DTR -->
-        <div class="panel live-dtr-panel">
-          <div class="panel-header">
-            <h3 class="panel-title">Live DTR Status</h3>
-            <button class="btn-panel-action" onclick="viewAllDTR()">View All</button>
-          </div>
-          <div class="live-dtr-list" id="live-dtr-list"></div>
+      <!-- Check-in/Check-out Form -->
+      <form id="dtr-form" onsubmit="handleDTRAction(event)">
+        <div class="form-group">
+          <label class="form-label" for="sa-id">Student Assistant ID</label>
+          <input 
+            type="text" 
+            id="sa-id" 
+            class="form-input" 
+            placeholder="Enter your SA ID (e.g., SA001)" 
+            required 
+            autocomplete="off">
         </div>
 
-        <!-- Department Summary -->
-        <div class="panel dept-panel">
-          <div class="panel-header">
-            <h3 class="panel-title">Department Summary</h3>
-          </div>
-          <div class="dept-list" id="dept-summary-list"></div>
+        <div class="form-group">
+          <label class="form-label" for="department">Department</label>
+          <select id="department" class="form-select" required>
+            <option value="">Select Department</option>
+            <option value="Procurement">Procurement</option>
+            <option value="HRMO">HRMO</option>
+            <option value="Library">Library</option>
+            <option value="IT Department">IT Department</option>
+            <option value="Registrar">Registrar</option>
+            <option value="Accounting">Accounting</option>
+            <option value="Student Affairs">Student Affairs</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
+
+        <div class="form-group">
+          <label class="form-label" for="shift-type">Shift Type</label>
+          <select id="shift-type" class="form-select" required>
+            <option value="">Select Shift</option>
+            <option value="First Shift">Morning Shift</option>
+            <option value="Second Shift">Afternoon Shift</option>
+            <option value="Third Shift">(Broken Schedule)</option>
+            <option value="Whole Day">Whole Day</option>
+          </select>
+        </div>
+
+        <div class="action-buttons">
+          <button type="submit" id="checkin-btn" class="btn-action btn-checkin" data-action="checkin">
+            ✓ Check In
+          </button>
+          <button type="submit" id="checkout-btn" class="btn-action btn-checkout" data-action="checkout">
+            ↩ Check Out
+          </button>
+        </div>
+      </form>
+
+      <!-- Result Display -->
+      <div id="result" class="result" style="display: none;"></div>
+
+      <!-- Quick Access for Recent SAs -->
+      <div class="quick-access">
+        <div class="quick-title">Quick Access</div>
+        <div class="quick-buttons" id="quick-buttons"></div>
       </div>
 
-      <!-- Today's DTR Table -->
-      <div class="panel dtr-table-panel">
-        <div class="panel-header">
-          <h3 class="panel-title">Today's DTR Records</h3>
-          <div class="panel-actions">
-            <input type="text" class="search-input" placeholder="Search..." id="search-dtr">
-            <button class="btn-panel-action" onclick="exportTodayDTR()">📊 Export</button>
-          </div>
-        </div>
-        <div class="table-container">
-          <table class="data-table" id="today-dtr-table">
-            <thead>
-              <tr>
-                <th>SA ID</th>
-                <th>Name</th>
-                <th>Department</th>
-                <th>Shift Type</th>
-                <th>Time In</th>
-                <th>Time Out</th>
-                <th>Hours</th>
-                <th>Late</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="today-dtr-body"></tbody>
-          </table>
-        </div>
+      <!-- Footer Links -->
+      <div class="footer">
+        <button class="footer-btn" onclick="openRegistration()">➕ New SA? Register Here</button>
+        <a href="sa-dtr-admin.html" class="footer-link">📊 Admin Dashboard</a>
+        <a href="#" class="footer-link" onclick="viewMyDTR()">📋 View My DTR</a>
       </div>
     </div>
+  </div>
 
-    <!-- DTR Records View -->
-    <div id="dtr-records-view" class="view-container">
-      <div class="panel">
-        <div class="panel-header">
-          <h3 class="panel-title">DTR Records</h3>
-          <div class="panel-filters">
-            <select class="filter-select" id="filter-month">
-              <option value="current">Current Month</option>
-              <option value="last">Last Month</option>
-              <option value="all">All Time</option>
-            </select>
-            <select class="filter-select" id="filter-department">
-              <option value="">All Departments</option>
-            </select>
-            <button class="btn-panel-action" onclick="applyFilters()">Apply</button>
-          </div>
-        </div>
-        <div class="records-grid" id="records-grid"></div>
-      </div>
-    </div>
-
-    <!-- Student Assistants View -->
-    <div id="student-assistants-view" class="view-container">
-      <div class="panel">
-        <div class="panel-header">
-          <h3 class="panel-title">Student Assistants</h3>
-          <button class="btn-panel-action btn-primary" onclick="openAddSA()">+ Add New SA</button>
-        </div>
-        <div class="sa-grid" id="sa-grid"></div>
-      </div>
-    </div>
-
-    <!-- Reports View -->
-    <div id="reports-view" class="view-container">
-      <div class="panel">
-        <div class="panel-header">
-          <h3 class="panel-title">Monthly DTR Reports</h3>
-          <div class="panel-filters">
-            <select class="filter-select" id="report-month">
-              <!-- Populated by JS -->
-            </select>
-            <select class="filter-select" id="report-sa">
-              <option value="">All SAs</option>
-              <!-- Populated by JS -->
-            </select>
-            <button class="btn-panel-action" onclick="generateReport()">Generate Report</button>
-          </div>
-        </div>
-        <div id="report-content" class="report-content"></div>
-      </div>
-    </div>
-
-    <!-- Settings View -->
-    <div id="settings-view" class="view-container">
-      <div class="panel">
-        <div class="panel-header">
-          <h3 class="panel-title">System Settings</h3>
-        </div>
-        <div class="settings-content">
-          <div class="setting-section">
-            <h4 class="setting-title">Database Management</h4>
-            <button class="btn-setting" onclick="clearAllData()">Clear All Data</button>
-          </div>
-          <div class="setting-section">
-            <h4 class="setting-title">Export Data</h4>
-            <button class="btn-setting" onclick="exportAllData()">Export Complete Database</button>
-          </div>
-          <div class="setting-section">
-            <h4 class="setting-title">Backup & Restore</h4>
-            <button class="btn-setting" onclick="backupData()">Create Backup</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Manual Checkout Modal -->
-  <div id="checkout-modal" class="modal">
+  <!-- Registration Modal -->
+  <div id="registration-modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Manual Check Out</h3>
-        <button class="modal-close" onclick="closeCheckoutModal()">✕</button>
+        <h2>New Student Assistant Registration</h2>
+        <button class="modal-close" onclick="closeRegistration()">✕</button>
       </div>
-      <div class="modal-body">
-        <p>Manually check out <strong id="checkout-sa-name"></strong>?</p>
-        <div class="checkout-info">
-          <div class="info-row">
-            <span>Time In:</span>
-            <span id="checkout-time-in"></span>
+      <form id="registration-form" onsubmit="handleRegistration(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name *</label>
+            <input type="text" id="reg-firstname" class="form-input" required>
           </div>
-          <div class="info-row">
-            <span>Duration:</span>
-            <span id="checkout-duration"></span>
+          <div class="form-group">
+            <label class="form-label">Last Name *</label>
+            <input type="text" id="reg-lastname" class="form-input" required>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="closeCheckoutModal()">Cancel</button>
-        <button class="btn-primary" onclick="confirmCheckout()">Confirm Check Out</button>
+        
+        <div class="form-group">
+          <label class="form-label">Student Number *</label>
+          <input type="text" id="reg-student-number" class="form-input" placeholder="e.g., 2021-12345" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input type="email" id="reg-email" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Contact Number *</label>
+          <input type="tel" id="reg-phone" class="form-input" placeholder="+63" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Department *</label>
+            <select id="reg-department" class="form-select" required>
+              <option value="">Select Department</option>
+              <option value="Procurement">Procurement</option>
+              <option value="HRMO">HRMO</option>
+              <option value="Library">Library</option>
+              <option value="IT Department">IT Department</option>
+              <option value="Registrar">Registrar</option>
+              <option value="Accounting">Accounting</option>
+              <option value="Student Affairs">Student Affairs</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Duty Hours/Week *</label>
+            <input type="number" id="reg-duty-hours" class="form-input" min="1" max="40" value="5" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Schedule Notes (Optional)</label>
+          <textarea id="reg-notes" class="form-input" rows="2" placeholder="Any specific schedule or requirements..."></textarea>
+        </div>
+
+        <div class="registration-info">
+          <div class="info-icon">ℹ️</div>
+          <div class="info-text">After registration, you'll receive your <strong>SA ID</strong> which you can use for DTR check-in/check-out.</div>
+        </div>
+
+        <button type="submit" class="btn-register" id="register-btn">✓ Complete Registration</button>
+        <button type="button" class="btn-cancel" onclick="closeRegistration()">Cancel</button>
+      </form>
+
+      <!-- Registration Success Display -->
+      <div id="registration-success" class="registration-result" style="display: none;">
+        <div class="success-icon">🎉</div>
+        <h3 class="success-title">Registration Successful!</h3>
+        <p class="success-message">Welcome to the Student Assistant Program!</p>
+        <div class="sa-id-card">
+          <div class="id-label">Your SA ID:</div>
+          <div class="id-value" id="new-sa-id"></div>
+          <div class="id-note">Save this ID - you'll need it for DTR</div>
+        </div>
+        <div class="sa-details" id="new-sa-details"></div>
+        <button class="btn-primary" onclick="useNewID()">Check In Now</button>
+        <button class="btn-outline" onclick="closeRegistration()">Done</button>
       </div>
     </div>
   </div>
 
-  <script src="sa-dtr-admin-script.js"></script>
-</body>
+  <!-- View DTR Modal -->
+  <div id="dtr-view-modal" class="modal">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2>My DTR - <span id="dtr-month-display"></span></h2>
+        <button class="modal-close" onclick="closeDTRView()">✕</button>
+      </div>
+      <div class="dtr-summary" id="dtr-summary"></div>
+      <div class="dtr-table-container">
+        <table class="dtr-table" id="dtr-table"></table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="exportDTR()">📄 Export DTR</button>
+        <button class="btn-primary" onclick="closeDTRView()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="sa-dtr-script.js"></script>
+  <nav>
+</body>   
 </html>
