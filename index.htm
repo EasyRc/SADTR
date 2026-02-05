@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA DTR Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sa-dtr-admin-styles.css">
+</head>
+<body>
+  <!-- Background -->
+  <div class="bg-container">
+    <div class="bg-gradient"></div>
+    <div class="grid-overlay"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <img src="ush_logo.png" alt="Logo" class="sidebar-logo" onerror="this.style.display='none'">
+      </div>
+      <h2 class="sidebar-title">SA DTR<br>ADMIN</h2>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-view="dashboard">
+        <span class="nav-icon">📊</span>
+        <span class="nav-text">Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-view="dtr-records">
+        <span class="nav-icon">📋</span>
+        <span class="nav-text">DTR Records</span>
+      </a>
+      <a href="#" class="nav-item" data-view="student-assistants">
+        <span class="nav-icon">👥</span>
+        <span class="nav-text">Student Assistants</span>
+      </a>
+      <a href="#" class="nav-item" data-view="reports">
+        <span class="nav-icon">📈</span>
+        <span class="nav-text">Reports</span>
+      </a>
+      <a href="#" class="nav-item" data-view="settings">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-text">Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-profile">
+        <div class="admin-avatar">A</div>
+        <div class="admin-info">
+          <div class="admin-name">Administrator</div>
+          <div class="admin-role">HRMO</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Student Assistant DTR Monitoring</p>
+      </div>
+      <div class="header-right">
+        <div class="date-time" id="current-datetime"></div>
+        <button class="btn-refresh" onclick="refreshData()">
+          <span class="refresh-icon">🔄</span>
+          Refresh
+        </button>
+      </div>
+    </header>
+
+    <!-- Dashboard View -->
+    <div id="dashboard-view" class="view-container active">
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card stat-primary">
+          <div class="stat-header">
+            <span class="stat-icon">✓</span>
+            <span class="stat-trend up">Today</span>
+          </div>
+          <div class="stat-value" id="stat-checked-in">0</div>
+          <div class="stat-label">Currently On Duty</div>
+          <div class="stat-footer">
+            <span class="stat-detail" id="stat-dept-breakdown"></span>
+          </div>
+        </div>
+
+        <div class="stat-card stat-success">
+          <div class="stat-header">
+            <span class="stat-icon">👥</span>
+            <span class="stat-trend">Total</span>
+          </div>
+          <div class="stat-value" id="stat-total-sas">0</div>
+          <div class="stat-label">Registered SAs</div>
+          <div class="stat-footer">
+            <span class="stat-detail" id="stat-active-sas"></span>
+          </div>
+        </div>
+
+        <div class="stat-card stat-warning">
+          <div class="stat-header">
+            <span class="stat-icon">📅</span>
+            <span class="stat-trend">This Month</span>
+          </div>
+          <div class="stat-value" id="stat-month-hours">0</div>
+          <div class="stat-label">Total Hours</div>
+          <div class="stat-footer">
+            <span class="stat-detail" id="stat-avg-hours"></span>
+          </div>
+        </div>
+
+        <div class="stat-card stat-info">
+          <div class="stat-header">
+            <span class="stat-icon">⏱️</span>
+            <span class="stat-trend">Today</span>
+          </div>
+          <div class="stat-value" id="stat-today-records">0</div>
+          <div class="stat-label">DTR Records</div>
+          <div class="stat-footer">
+            <span class="stat-detail" id="stat-completed"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live DTR & Recent Activity -->
+      <div class="dashboard-row">
+        <!-- Live DTR -->
+        <div class="panel live-dtr-panel">
+          <div class="panel-header">
+            <h3 class="panel-title">Live DTR Status</h3>
+            <button class="btn-panel-action" onclick="viewAllDTR()">View All</button>
+          </div>
+          <div class="live-dtr-list" id="live-dtr-list"></div>
+        </div>
+
+        <!-- Department Summary -->
+        <div class="panel dept-panel">
+          <div class="panel-header">
+            <h3 class="panel-title">Department Summary</h3>
+          </div>
+          <div class="dept-list" id="dept-summary-list"></div>
+        </div>
+      </div>
+
+      <!-- Today's DTR Table -->
+      <div class="panel dtr-table-panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Today's DTR Records</h3>
+          <div class="panel-actions">
+            <input type="text" class="search-input" placeholder="Search..." id="search-dtr">
+            <button class="btn-panel-action" onclick="exportTodayDTR()">📊 Export</button>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table" id="today-dtr-table">
+            <thead>
+              <tr>
+                <th>SA ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Shift Type</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Hours</th>
+                <th>Late</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="today-dtr-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DTR Records View -->
+    <div id="dtr-records-view" class="view-container">
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">DTR Records</h3>
+          <div class="panel-filters">
+            <select class="filter-select" id="filter-month">
+              <option value="current">Current Month</option>
+              <option value="last">Last Month</option>
+              <option value="all">All Time</option>
+            </select>
+            <select class="filter-select" id="filter-department">
+              <option value="">All Departments</option>
+            </select>
+            <button class="btn-panel-action" onclick="applyFilters()">Apply</button>
+          </div>
+        </div>
+        <div class="records-grid" id="records-grid"></div>
+      </div>
+    </div>
+
+    <!-- Student Assistants View -->
+    <div id="student-assistants-view" class="view-container">
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Student Assistants</h3>
+          <button class="btn-panel-action btn-primary" onclick="openAddSA()">+ Add New SA</button>
+        </div>
+        <div class="sa-grid" id="sa-grid"></div>
+      </div>
+    </div>
+
+    <!-- Reports View -->
+    <div id="reports-view" class="view-container">
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Monthly DTR Reports</h3>
+          <div class="panel-filters">
+            <select class="filter-select" id="report-month">
+              <!-- Populated by JS -->
+            </select>
+            <select class="filter-select" id="report-sa">
+              <option value="">All SAs</option>
+              <!-- Populated by JS -->
+            </select>
+            <button class="btn-panel-action" onclick="generateReport()">Generate Report</button>
+          </div>
+        </div>
+        <div id="report-content" class="report-content"></div>
+      </div>
+    </div>
+
+    <!-- Settings View -->
+    <div id="settings-view" class="view-container">
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">System Settings</h3>
+        </div>
+        <div class="settings-content">
+          <div class="setting-section">
+            <h4 class="setting-title">Database Management</h4>
+            <button class="btn-setting" onclick="clearAllData()">Clear All Data</button>
+          </div>
+          <div class="setting-section">
+            <h4 class="setting-title">Export Data</h4>
+            <button class="btn-setting" onclick="exportAllData()">Export Complete Database</button>
+          </div>
+          <div class="setting-section">
+            <h4 class="setting-title">Backup & Restore</h4>
+            <button class="btn-setting" onclick="backupData()">Create Backup</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Manual Checkout Modal -->
+  <div id="checkout-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Manual Check Out</h3>
+        <button class="modal-close" onclick="closeCheckoutModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Manually check out <strong id="checkout-sa-name"></strong>?</p>
+        <div class="checkout-info">
+          <div class="info-row">
+            <span>Time In:</span>
+            <span id="checkout-time-in"></span>
+          </div>
+          <div class="info-row">
+            <span>Duration:</span>
+            <span id="checkout-duration"></span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeCheckoutModal()">Cancel</button>
+        <button class="btn-primary" onclick="confirmCheckout()">Confirm Check Out</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="sa-dtr-admin-script.js"></script>
+</body>
+</html>
