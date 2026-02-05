@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Assistant DTR System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="sa-dtr-styles.css">
+</head>
+<nav>
+  <link rel="Admin" href="sa-dtr-admin.html">
+<body>
+
+  <!-- Enhanced Background -->
+  <div class="bg-container">
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <div class="logo">
+          <img src="ush_logo.png" alt="University of Baguio Logo" onerror="this.style.display='none'">
+        </div>
+        <h1>Student Assistant DTR</h1>
+        <p class="subtitle">Daily Time Record Check-In/Check-Out System</p>
+        <div class="current-date" id="current-date"></div>
+      </div>
+
+      <!-- Check-in/Check-out Form -->
+      <form id="dtr-form" onsubmit="handleDTRAction(event)">
+        <div class="form-group">
+          <label class="form-label" for="sa-id">Student Assistant ID</label>
+          <input 
+            type="text" 
+            id="sa-id" 
+            class="form-input" 
+            placeholder="Enter your SA ID (e.g., SA001)" 
+            required 
+            autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="department">Department</label>
+          <select id="department" class="form-select" required>
+            <option value="">Select Department</option>
+            <option value="Procurement">Procurement</option>
+            <option value="HRMO">HRMO</option>
+            <option value="Library">Library</option>
+            <option value="IT Department">IT Department</option>
+            <option value="Registrar">Registrar</option>
+            <option value="Accounting">Accounting</option>
+            <option value="Student Affairs">Student Affairs</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="shift-type">Shift Type</label>
+          <select id="shift-type" class="form-select" required>
+            <option value="">Select Shift</option>
+            <option value="First Shift">Morning Shift</option>
+            <option value="Second Shift">Afternoon Shift</option>
+            <option value="Third Shift">(Broken Schedule)</option>
+            <option value="Whole Day">Whole Day</option>
+          </select>
+        </div>
+
+        <div class="action-buttons">
+          <button type="submit" id="checkin-btn" class="btn-action btn-checkin" data-action="checkin">
+            ✓ Check In
+          </button>
+          <button type="submit" id="checkout-btn" class="btn-action btn-checkout" data-action="checkout">
+            ↩ Check Out
+          </button>
+        </div>
+      </form>
+
+      <!-- Result Display -->
+      <div id="result" class="result" style="display: none;"></div>
+
+      <!-- Quick Access for Recent SAs -->
+      <div class="quick-access">
+        <div class="quick-title">Quick Access</div>
+        <div class="quick-buttons" id="quick-buttons"></div>
+      </div>
+
+      <!-- Footer Links -->
+      <div class="footer">
+        <button class="footer-btn" onclick="openRegistration()">➕ New SA? Register Here</button>
+        <a href="sa-dtr-admin.html" class="footer-link">📊 Admin Dashboard</a>
+        <a href="#" class="footer-link" onclick="viewMyDTR()">📋 View My DTR</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Modal -->
+  <div id="registration-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>New Student Assistant Registration</h2>
+        <button class="modal-close" onclick="closeRegistration()">✕</button>
+      </div>
+      <form id="registration-form" onsubmit="handleRegistration(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name *</label>
+            <input type="text" id="reg-firstname" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name *</label>
+            <input type="text" id="reg-lastname" class="form-input" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Student Number *</label>
+          <input type="text" id="reg-student-number" class="form-input" placeholder="e.g., 2021-12345" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input type="email" id="reg-email" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Contact Number *</label>
+          <input type="tel" id="reg-phone" class="form-input" placeholder="+63" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Department *</label>
+            <select id="reg-department" class="form-select" required>
+              <option value="">Select Department</option>
+              <option value="Procurement">Procurement</option>
+              <option value="HRMO">HRMO</option>
+              <option value="Library">Library</option>
+              <option value="IT Department">IT Department</option>
+              <option value="Registrar">Registrar</option>
+              <option value="Accounting">Accounting</option>
+              <option value="Student Affairs">Student Affairs</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Duty Hours/Week *</label>
+            <input type="number" id="reg-duty-hours" class="form-input" min="1" max="40" value="5" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Schedule Notes (Optional)</label>
+          <textarea id="reg-notes" class="form-input" rows="2" placeholder="Any specific schedule or requirements..."></textarea>
+        </div>
+
+        <div class="registration-info">
+          <div class="info-icon">ℹ️</div>
+          <div class="info-text">After registration, you'll receive your <strong>SA ID</strong> which you can use for DTR check-in/check-out.</div>
+        </div>
+
+        <button type="submit" class="btn-register" id="register-btn">✓ Complete Registration</button>
+        <button type="button" class="btn-cancel" onclick="closeRegistration()">Cancel</button>
+      </form>
+
+      <!-- Registration Success Display -->
+      <div id="registration-success" class="registration-result" style="display: none;">
+        <div class="success-icon">🎉</div>
+        <h3 class="success-title">Registration Successful!</h3>
+        <p class="success-message">Welcome to the Student Assistant Program!</p>
+        <div class="sa-id-card">
+          <div class="id-label">Your SA ID:</div>
+          <div class="id-value" id="new-sa-id"></div>
+          <div class="id-note">Save this ID - you'll need it for DTR</div>
+        </div>
+        <div class="sa-details" id="new-sa-details"></div>
+        <button class="btn-primary" onclick="useNewID()">Check In Now</button>
+        <button class="btn-outline" onclick="closeRegistration()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- View DTR Modal -->
+  <div id="dtr-view-modal" class="modal">
+    <div class="modal-content modal-large">
+      <div class="modal-header">
+        <h2>My DTR - <span id="dtr-month-display"></span></h2>
+        <button class="modal-close" onclick="closeDTRView()">✕</button>
+      </div>
+      <div class="dtr-summary" id="dtr-summary"></div>
+      <div class="dtr-table-container">
+        <table class="dtr-table" id="dtr-table"></table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="exportDTR()">📄 Export DTR</button>
+        <button class="btn-primary" onclick="closeDTRView()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="sa-dtr-script.js"></script>
+  <nav>
+</body>   
+</html>
